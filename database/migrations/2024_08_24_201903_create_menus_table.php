@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('link')->nullable();
+            $table->integer('level')->nullable();
+            $table->integer('order_at')->nullable();
             $table->timestamps();
+            $table->softDeletes('deleted_at');
         });
     }
 

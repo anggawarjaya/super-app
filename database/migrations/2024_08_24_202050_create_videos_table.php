@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
+            $table->string('title')->nullable();
+            $table->text('link');
+            $table->integer('order_at')->nullable();
             $table->timestamps();
+            $table->softDeletes('deleted_at');
         });
     }
 
