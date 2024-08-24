@@ -4,6 +4,7 @@ namespace App\Models;
 
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail, FilamentUser
+class User extends Authenticatable implements MustVerifyEmail, FilamentUser, HasAvatar
 {
     use HasFactory, Notifiable, SoftDeletes, HasRoles, HasPanelShield;
 
@@ -59,5 +60,16 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
     public function creations() : HasMany
     {
         return $this->hasMany(Creation::class);
+    }
+
+    public function testimonial() : HasOne
+    {
+        return $this->hasOne(Testimonial::class);
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        $name = "storage/" . $this->student->image;
+        return url($name);
     }
 }

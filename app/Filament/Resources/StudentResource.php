@@ -69,7 +69,8 @@ class StudentResource extends Resource
                             ->searchingMessage('Mencari akun pengguna...')
                             ->placeholder('Pilih Akun Pengguna')
                             ->preload()
-                            ->required(),
+                            ->required()
+                            ->disabledOn('edit'),
                         Select::make('study_program_id')
                             ->label('Program Studi')
                             ->relationship('study_program', 'name')
