@@ -10,8 +10,10 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -24,6 +26,8 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserResource extends Resource
 {
@@ -53,6 +57,7 @@ class UserResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
+                    ->label('Nama')
                     ->required()
                     ->maxLength(255),
                 TextInput::make('email')
@@ -61,8 +66,24 @@ class UserResource extends Resource
                     ->maxLength(255),
                 TextInput::make('password')
                     ->password()
+                    ->revealable(filament()->arePasswordsRevealable())
+                    ->rule(Password::default())
+                    ->autocomplete('new-password')
+                    ->dehydrated(fn ($state): bool => filled($state))
+                    ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
+                    ->live(debounce: 500)
+                    ->same('passwordConfirmation'),
+                TextInput::make('passwordConfirmation')
+                    ->password()
+                    ->revealable(filament()->arePasswordsRevealable())
                     ->required()
-                    ->maxLength(255),
+                    ->visible(fn (Get $get): bool => filled($get('password')))
+                    ->dehydrated(false),
+                Select::make('roles')
+                    ->relationship('roles', 'name')
+                    ->multiple()
+                    ->preload()
+                    ->searchable(),
             ]);
     }
 

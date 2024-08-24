@@ -11,6 +11,7 @@ use App\Models\Student;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -124,6 +125,7 @@ class StudentResource extends Resource
                             ->label('Lembar Hasil Studi')
                             ->acceptedFileTypes(['application/pdf'])    
                             ->downloadable()
+                            ->openable()
                             ->directory('lhs')
                             ->maxSize(1024)
                             ->columnSpan('full')
@@ -154,8 +156,56 @@ class StudentResource extends Resource
                     ->collapsed()
                     ->compact()
                     ->columns(4),
+                RichEditor::make('quote')
+                    ->toolbarButtons([
+                        'bold',
+                        'bulletList',
+                        'orderedList',
+                        'blockquote',
+                        'italic',
+                        'link',
+                        'redo',
+                        'strike',
+                        'underline',
+                        'undo',
+                    ]),
+                RichEditor::make('kompetensi')
+                    ->toolbarButtons([
+                        'bold',
+                        'bulletList',
+                        'orderedList',
+                        'blockquote',
+                        'italic',
+                        'link',
+                        'redo',
+                        'strike',
+                        'underline',
+                        'undo',
+                    ]),
+                RichEditor::make('testimoni')
+                    ->toolbarButtons([
+                        'bold',
+                        'bulletList',
+                        'orderedList',
+                        'blockquote',
+                        'italic',
+                        'link',
+                        'redo',
+                        'strike',
+                        'underline',
+                        'undo',
+                    ]),
                 FileUpload::make('image')
-                    ->image(),
+                    ->maxSize(1024)
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '1:1',
+                    ])
+                    ->loadingIndicatorPosition('left')
+                    ->panelLayout('integrated')
+                    ->removeUploadedFileButtonPosition('right')
+                    ->uploadButtonPosition('left')
+                    ->uploadProgressIndicatorPosition('left'),
             ]);
     }
 
