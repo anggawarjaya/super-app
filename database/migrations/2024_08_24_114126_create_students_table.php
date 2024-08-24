@@ -25,13 +25,13 @@ return new class extends Migration
             $table->text('tempat_domisili')->nullable();
             $table->decimal('ipk', 3, 2)->default(0.00);
             $table->string('lhs')->nullable();
+            $table->string('wa')->nullable();
             $table->string('instagram')->nullable();
             $table->string('tiktok')->nullable();
+            $table->string('x')->nullable();
             $table->string('youtube')->nullable();
             $table->string('facebook')->nullable();
             $table->string('linkedin')->nullable();
-            $table->string('twitter')->nullable();
-            $table->string('line')->nullable();
             $table->string('telegram')->nullable();
             $table->text('quote')->nullable();
             $table->text('kompetensi')->nullable();
