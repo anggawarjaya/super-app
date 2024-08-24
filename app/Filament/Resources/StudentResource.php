@@ -154,12 +154,6 @@ class StudentResource extends Resource
                     ->collapsed()
                     ->compact()
                     ->columns(4),
-                Textarea::make('quote')
-                    ->columnSpanFull(),
-                Textarea::make('kompetensi')
-                    ->columnSpanFull(),
-                Textarea::make('testimoni')
-                    ->columnSpanFull(),
                 FileUpload::make('image')
                     ->image(),
             ]);
