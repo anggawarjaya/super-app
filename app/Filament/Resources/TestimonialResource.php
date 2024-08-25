@@ -8,6 +8,7 @@ use App\Filament\Resources\TestimonialResource\Pages\EditTestimonial;
 use App\Filament\Resources\TestimonialResource\Pages\ListTestimonials;
 use App\Filament\Resources\TestimonialResource\RelationManagers;
 use App\Models\Testimonial;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -54,7 +55,14 @@ class TestimonialResource extends Resource
             ->schema([
                 Select::make('user_id')
                     ->label('Nama Akun Pengguna')
-                    ->relationship('user', 'name')
+                    ->options(function ($record) {
+                        return User::query()
+                            ->whereDoesntHave('student')
+                            ->when($record, function ($query, $record) {
+                                return $query->orWhere('id', $record->user_id);
+                            })
+                            ->pluck('name', 'id');
+                    })
                     ->searchable()
                     ->noSearchResultsMessage('Akun pengguna tidak ditemukan.')
                     ->searchPrompt('Cari akun pengguna')

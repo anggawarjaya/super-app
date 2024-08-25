@@ -8,6 +8,7 @@ use App\Filament\Resources\StudentResource\Pages\EditStudent;
 use App\Filament\Resources\StudentResource\Pages\ListStudents;
 use App\Filament\Resources\StudentResource\RelationManagers;
 use App\Models\Student;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -62,15 +63,21 @@ class StudentResource extends Resource
                     ->schema([
                         Select::make('user_id')
                             ->label('Nama Akun Pengguna')
-                            ->relationship('user', 'name')
+                            ->options(function ($record) {
+                                return User::query()
+                                    ->whereDoesntHave('student')
+                                    ->when($record, function ($query, $record) {
+                                        return $query->orWhere('id', $record->user_id);
+                                    })
+                                    ->pluck('name', 'id');
+                            })
                             ->searchable()
                             ->noSearchResultsMessage('Akun pengguna tidak ditemukan.')
                             ->searchPrompt('Cari akun pengguna')
                             ->searchingMessage('Mencari akun pengguna...')
                             ->placeholder('Pilih Akun Pengguna')
                             ->preload()
-                            ->required()
-                            ->disabledOn('edit'),
+                            ->required(),
                         Select::make('study_program_id')
                             ->label('Program Studi')
                             ->relationship('study_program', 'name')
