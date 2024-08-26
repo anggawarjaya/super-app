@@ -204,6 +204,7 @@ class StudentResource extends Resource
                         'undo',
                     ]),
                 FileUpload::make('image')
+                    ->label('Gambar')
                     ->maxSize(1024)
                     ->imageEditor()
                     ->imageEditorAspectRatios([

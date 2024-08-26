@@ -69,7 +69,11 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser, Has
 
     public function getFilamentAvatarUrl(): ?string
     {
-        $name = "storage/" . $this->student->image;
-        return url($name);
+        if ($this->student && $this->student->image) {
+            $name = "storage/" . $this->student->image;
+            return url($name);
+        }
+        
+        return null;
     }
 }

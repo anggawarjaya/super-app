@@ -3,15 +3,31 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CategoryCreationResource\Pages;
+use App\Filament\Resources\CategoryCreationResource\Pages\CreateCategoryCreation;
+use App\Filament\Resources\CategoryCreationResource\Pages\EditCategoryCreation;
+use App\Filament\Resources\CategoryCreationResource\Pages\ListCategoryCreations;
 use App\Filament\Resources\CategoryCreationResource\RelationManagers;
 use App\Models\CategoryCreation;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use PhpParser\Node\Stmt\Label;
 
 class CategoryCreationResource extends Resource
 {
@@ -19,20 +35,59 @@ class CategoryCreationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Data Master';
+
+    protected static ?string $navigationLabel = 'Kategori Kreativitas';
+
+    protected static ?int $navigationSort = 7;
+
+    protected static ?string $pluralModelLabel = 'Kategori Kreativitas';
+
+    protected static ?string $modelLabel = 'Kategori Kreativitas';
+
+    protected static ?string $slug = 'kategori-kreativitas';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\FileUpload::make('image')
-                    ->image(),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
+                    ->maxLength(255)
+                    ->columnSpanFull()
+                    ->label('Nama Kategori Kreativitas'),
+                RichEditor::make('description')
+                    ->label('Deskripsi')
+                    ->toolbarButtons([
+                        'bold',
+                        'bulletList',
+                        'orderedList',
+                        'blockquote',
+                        'italic',
+                        'link',
+                        'redo',
+                        'strike',
+                        'underline',
+                        'undo',
+                    ]),
+                FileUpload::make('image')
+                    ->image()
+                    ->label('Gambar')
+                    ->maxSize(1024)
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '1:1',
+                    ])
+                    ->loadingIndicatorPosition('left')
+                    ->panelLayout('integrated')
+                    ->removeUploadedFileButtonPosition('right')
+                    ->uploadButtonPosition('left')
+                    ->uploadProgressIndicatorPosition('left'),
             ]);
     }
 
@@ -40,35 +95,45 @@ class CategoryCreationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('index')
+                    ->rowIndex()
+                    ->label('No')
+                    ->width(40),
+                ImageColumn::make('image')
+                    ->label('Gambar'),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->label('Nama Kategori Kreatifitas'),
+                TextColumn::make('slug')
+                    ->copyable()
+                    ->label('Link Akses'),
+                TextColumn::make('created_at')
+                    ->label('Dibuat pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
+                    ->label('Diubah pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
+                    ->label('Dihapus pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -83,9 +148,9 @@ class CategoryCreationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCategoryCreations::route('/'),
-            'create' => Pages\CreateCategoryCreation::route('/create'),
-            'edit' => Pages\EditCategoryCreation::route('/{record}/edit'),
+            'index' => ListCategoryCreations::route('/'),
+            'create' => CreateCategoryCreation::route('/create'),
+            'edit' => EditCategoryCreation::route('/{record}/edit'),
         ];
     }
 
