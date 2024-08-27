@@ -24,6 +24,7 @@ class Creation extends Model
         'description',
         'image',
         'link',
+        'n_like',
         'status',
     ];
 

@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('creations', function (Blueprint $table) {
+        Schema::create('divisions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('category_creation_id')->constrained('category_creations')->cascadeOnDelete();
+            $table->foreignId('cohort_id')->constrained('cohorts')->cascadeOnDelete();
+            $table->string('name');
             $table->string('slug')->unique();
-            $table->string('title');
-            $table->string('description')->nullable();
             $table->string('image')->nullable();
-            $table->string('link')->unique();
-            $table->integer('n_like')->nullable();
-            $table->tinyInteger('status')->default(0);
+            $table->text('description')->nullable();
+            $table->text('vision')->nullable();
+            $table->text('mission')->nullable();
             $table->timestamps();
             $table->softDeletes('deleted_at');
         });
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('creations');
+        Schema::dropIfExists('divisions');
     }
 };

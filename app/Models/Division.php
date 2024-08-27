@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Cohort extends Model
+class Division extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -17,12 +17,17 @@ class Cohort extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'cohort_id',
         'name',
-        'is_active',
+        'slug',
+        'image',
+        'description',
+        'vision',
+        'mission'
     ];
 
-    public function divisions() : HasMany
+    public function cohort() : BelongsTo 
     {
-        return $this->hasMany(Division::class);
+        return $this->belongsTo(Cohort::class);
     }
 }
