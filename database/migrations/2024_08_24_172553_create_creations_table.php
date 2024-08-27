@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('image')->nullable();
             $table->string('link')->unique();
+            $table->increments('like')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
             $table->softDeletes('deleted_at');
